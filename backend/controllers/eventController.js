@@ -3,7 +3,7 @@ import cloudinary from "../config/cloudinary.js";
 
 export const createEvent = async (req, res) => {
   try {
-    const { title, description, location, date } = req.body;
+    const { title, description, location, date, category } = req.body;
 
     if (!title || !description || !location || !date)
       return res.status(400).json({ msg: "All fields required" });
@@ -18,11 +18,11 @@ export const createEvent = async (req, res) => {
     }
 
     const query = `
-      INSERT INTO events (title, description, location, date, created_by, image_url)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO events (title, description, location, date, created_by, image_url,category)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
-    db.query(query, [title, description, location, date, req.user.id, image_url],
+    db.query(query, [title, description, location, date, req.user.id, image_url,category],
       (err, result) => {
         if (err) return res.status(500).json({ msg: err });
 
