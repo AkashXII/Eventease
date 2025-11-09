@@ -1,26 +1,47 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import React from "react";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+} from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import CreateEvent from "./pages/CreateEvent.jsx"; // (we'll make this later)
+import Navbar from "./pages/Navbar.jsx";
+import ProtectedRoute from "./pages/ProtectedRoute.jsx";
+
+function Layout() {
+  return (
+    <>
+      <Navbar />
+      <div className="container mx-auto p-4">
+        <Outlet />
+      </div>
+    </>
+  );
+}
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: "login", element: <Login /> },
+      { path: "register", element: <Register /> },
+      {
+        path: "create",
+        element: (
+          <ProtectedRoute requireAdmin>
+            <CreateEvent />
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+]);
 
 export default function App() {
-  return (
-    <BrowserRouter>
-      <nav className="bg-gray-900 text-white p-3 flex justify-between">
-        <Link to="/" className="font-semibold">EventEase</Link>
-        <div className="space-x-4">
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
-        </div>
-      </nav>
-
-      <div className="container mx-auto p-4">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
-  );
+  return <RouterProvider router={router} />;
 }

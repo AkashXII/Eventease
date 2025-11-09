@@ -1,0 +1,17 @@
+Backend:
+	 /config:
+		claudinary: setup the cloud services to load imgages
+		db.js:connecting to MySQL
+	/controllers:
+		authcontroller.js: contains register function and login function which returns jwt token upon success(sql queries for user table)
+		eventcontroller.js:contains stuff to insert into events table
+		registrationcontroller.js:stuff to insert into our registration table(rsvp)
+	/middleware:
+		authmiddleware.js: main thing that validates the token and also validates for admins
+		upload.js:cloud imgaes stuff(not imp)
+
+	/routes
+		all the routes for all the pages..
+	server.js->routes.
+
+//THE CONTROLLERS CONTAIN THE BASIC LOGIC NEEDED FOR THE TABLES AND FUNCTIONS..WEHN LOGGED IN THE TOKEN IS USED BY THE MIDDLEWEAR TO validate THE PROTCXTED ROUTES(basically the ones after the login) AND IT APPROVES ONCE APPROVED THE ROUTE CAN BE ACCESSED.
