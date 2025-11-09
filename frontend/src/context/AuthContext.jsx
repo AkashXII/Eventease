@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 export const AuthContext = createContext();
 
@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (token, userObj) => {
+  const login = (token, userObj) => { //important..all the calls from the ./pages/Login.jsx is from here
     localStorage.setItem("token", token);
     setUser(userObj);
   };
