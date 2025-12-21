@@ -10,6 +10,9 @@ import Register from "./pages/Register.jsx";
 import CreateEvent from "./pages/CreateEvent.jsx"; // (we'll make this later)
 import Navbar from "./pages/Navbar.jsx";
 import ProtectedRoute from "./pages/ProtectedRoute.jsx";
+import EventDetails from "./pages/EventDetails.jsx";
+
+
 
 function Layout() {
   return (
@@ -38,6 +41,10 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+  path: "event/:id",
+  element: <EventDetails />,
+}
     ],
   },
 ]);
