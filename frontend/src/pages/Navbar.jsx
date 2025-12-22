@@ -13,11 +13,20 @@ export default function Navbar() {
 
   return (
     <nav className="bg-gray-900 text-white p-3 flex justify-between items-center">
-      <Link to="/" className="font-semibold text-xl">EventEase</Link>
+      <Link to="/" className="font-semibold text-xl">
+        EventEase
+      </Link>
 
       <div className="space-x-4 flex items-center">
         {user ? (
           <>
+            <Link
+              to="/my-events"
+              className="bg-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-600"
+            >
+              My Events
+            </Link>
+
             <span className="text-sm text-gray-300">
               Hello, {user.role === "admin" ? "Admin" : "User"}
             </span>
@@ -40,8 +49,12 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <Link to="/login" className="hover:text-gray-300">Login</Link>
-            <Link to="/register" className="hover:text-gray-300">Register</Link>
+            <Link to="/login" className="hover:text-gray-300">
+              Login
+            </Link>
+            <Link to="/register" className="hover:text-gray-300">
+              Register
+            </Link>
           </>
         )}
       </div>

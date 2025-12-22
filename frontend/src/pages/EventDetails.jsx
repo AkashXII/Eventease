@@ -8,38 +8,44 @@ export default function EventDetails() {
   const { user } = useContext(AuthContext);
 
   const [event, setEvent] = useState(null);
+  const [registered, setRegistered] = useState(false);
+  const [rsvpCount, setRsvpCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
+  const isPastEvent = event && new Date(event.date) < new Date();
+
   useEffect(() => {
-    api
-      .get(`/events/${id}`)
-      .then((res) => {
-        setEvent(res.data);
+    Promise.all([
+      api.get(`/events/${id}`),
+      api.get(`/registrations/count/${id}`),
+      user ? api.get(`/registrations/status/${id}`) : null
+    ])
+      .then(([eventRes, countRes, statusRes]) => {
+        setEvent(eventRes.data);
+        setRsvpCount(countRes.data.count);
+        if (statusRes) setRegistered(statusRes.data.registered);
         setLoading(false);
       })
       .catch(() => {
         setMessage("Event not found");
         setLoading(false);
       });
-  }, [id]);
+  }, [id, user]);
 
   const handleRSVP = async () => {
     try {
       await api.post("/registrations", { event_id: id });
-      setMessage("✅ You have successfully registered for this event.");
+      setRegistered(true);
+      setRsvpCount((c) => c + 1);
+      setMessage("✅ You are registered for this event");
     } catch (err) {
       setMessage(err.response?.data?.msg || "Could not register");
     }
   };
 
-  if (loading) {
-    return <p className="text-center mt-10">Loading event...</p>;
-  }
-
-  if (!event) {
-    return <p className="text-center mt-10 text-red-500">{message}</p>;
-  }
+  if (loading) return <p className="text-center mt-10">Loading event...</p>;
+  if (!event) return <p className="text-center mt-10 text-red-500">{message}</p>;
 
   return (
     <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow">
@@ -63,26 +69,38 @@ export default function EventDetails() {
         </span>
       )}
 
-      <p className="mt-4 text-gray-800">{event.description}</p>
+      <p className="mt-4">{event.description}</p>
+
+      <p className="mt-4 text-sm text-gray-700">
+        👥 {rsvpCount} people registered
+      </p>
 
       <div className="mt-6">
-        {user ? (
+        {!user && (
+          <p className="text-sm text-gray-500">Please log in to register.</p>
+        )}
+
+        {user && isPastEvent && (
+          <p className="text-red-500 font-medium">Event has ended</p>
+        )}
+
+        {user && !isPastEvent && registered && (
+          <p className="text-green-600 font-medium">
+            ✅ You are registered for this event
+          </p>
+        )}
+
+        {user && !isPastEvent && !registered && (
           <button
             onClick={handleRSVP}
             className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
           >
             RSVP
           </button>
-        ) : (
-          <p className="text-sm text-gray-500">
-            Please log in to register for this event.
-          </p>
         )}
       </div>
 
-      {message && (
-        <p className="mt-4 text-sm font-medium text-blue-600">{message}</p>
-      )}
+      {message && <p className="mt-4 text-sm">{message}</p>}
     </div>
   );
 }

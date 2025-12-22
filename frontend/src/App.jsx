@@ -4,15 +4,15 @@ import {
   RouterProvider,
   Outlet,
 } from "react-router-dom";
+
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
-import CreateEvent from "./pages/CreateEvent.jsx"; // (we'll make this later)
+import CreateEvent from "./pages/CreateEvent.jsx";
 import Navbar from "./pages/Navbar.jsx";
 import ProtectedRoute from "./pages/ProtectedRoute.jsx";
 import EventDetails from "./pages/EventDetails.jsx";
-
-
+import MyRegistrations from "./pages/MyRegistrations.jsx";
 
 function Layout() {
   return (
@@ -33,6 +33,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+
       {
         path: "create",
         element: (
@@ -41,10 +42,20 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+
       {
-  path: "event/:id",
-  element: <EventDetails />,
-}
+        path: "event/:id",
+        element: <EventDetails />,
+      },
+
+      {
+        path: "my-events",
+        element: (
+          <ProtectedRoute>
+            <MyRegistrations />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);

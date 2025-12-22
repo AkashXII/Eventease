@@ -35,21 +35,28 @@ export const createEvent = async (req, res) => {
 };
 
 export const getEvents = (req, res) => {
-  db.query("SELECT * FROM events ORDER BY date ASC", (err, result) => {
+  db.query(
+  "SELECT * FROM events WHERE status != 'expired' ORDER BY date ASC",
+  (err, result) => {
     if (err) return res.status(500).json({ msg: err });
     res.json(result);
-  });
+  }
+);
 };
 
 export const getEvent = (req, res) => {
-  db.query("SELECT * FROM events WHERE event_id = ?", [req.params.id],
+  db.query(
+    "SELECT * FROM events WHERE event_id = ?",
+    [req.params.id],
     (err, result) => {
       if (err) return res.status(500).json({ msg: err });
-      if (result.length === 0) return res.status(404).json({ msg: "Not found" });
+      if (result.length === 0)
+        return res.status(404).json({ msg: "Event not found" });
       res.json(result[0]);
     }
   );
 };
+
 
 export const deleteEvent = (req, res) => {
   db.query("DELETE FROM events WHERE event_id = ?", [req.params.id],
