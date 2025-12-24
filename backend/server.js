@@ -6,6 +6,7 @@ import db from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import registrationRoutes from "./routes/registrationRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 
 import { expireEvents } from "./utils/expireEvents.js";
 
@@ -21,6 +22,8 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/registrations", registrationRoutes);
+app.use("/api/reviews", reviewRoutes);
+
 
 // Health check
 app.get("/", (req, res) => {

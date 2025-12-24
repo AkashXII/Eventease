@@ -10,25 +10,39 @@ export default function EventDetails() {
   const [event, setEvent] = useState(null);
   const [registered, setRegistered] = useState(false);
   const [rsvpCount, setRsvpCount] = useState(0);
+  const [reviews, setReviews] = useState([]);
+  const [rating, setRating] = useState(5);
+  const [reviewText, setReviewText] = useState("");
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
   const isPastEvent = event && new Date(event.date) < new Date();
 
   useEffect(() => {
-    Promise.all([
+    const requests = [
       api.get(`/events/${id}`),
       api.get(`/registrations/count/${id}`),
-      user ? api.get(`/registrations/status/${id}`) : null
-    ])
-      .then(([eventRes, countRes, statusRes]) => {
-        setEvent(eventRes.data);
-        setRsvpCount(countRes.data.count);
-        if (statusRes) setRegistered(statusRes.data.registered);
+      api.get(`/reviews/event/${id}`)
+    ];
+
+    if (user) {
+      requests.push(api.get(`/registrations/status/${id}`));
+    }
+
+    Promise.all(requests)
+      .then((responses) => {
+        setEvent(responses[0].data);
+        setRsvpCount(responses[1].data.count);
+        setReviews(responses[2].data);
+
+        if (user && responses[3]) {
+          setRegistered(responses[3].data.registered);
+        }
+
         setLoading(false);
       })
       .catch(() => {
-        setMessage("Event not found");
+        setMessage("Event not available");
         setLoading(false);
       });
   }, [id, user]);
@@ -37,15 +51,44 @@ export default function EventDetails() {
     try {
       await api.post("/registrations", { event_id: id });
       setRegistered(true);
-      setRsvpCount((c) => c + 1);
+      setRsvpCount((prev) => prev + 1);
       setMessage("✅ You are registered for this event");
     } catch (err) {
       setMessage(err.response?.data?.msg || "Could not register");
     }
   };
 
-  if (loading) return <p className="text-center mt-10">Loading event...</p>;
-  if (!event) return <p className="text-center mt-10 text-red-500">{message}</p>;
+  const submitReview = async () => {
+    if (!reviewText.trim()) {
+      setMessage("Review cannot be empty");
+      return;
+    }
+
+    try {
+      await api.post("/reviews", {
+        event_id: id,
+        rating,
+        review_text: reviewText,
+      });
+
+      setReviewText("");
+      setRating(5);
+      setMessage("Review submitted");
+
+      const res = await api.get(`/reviews/event/${id}`);
+      setReviews(res.data);
+    } catch (err) {
+      setMessage(err.response?.data?.msg || "Could not submit review");
+    }
+  };
+
+  if (loading) {
+    return <p className="text-center mt-10">Loading event...</p>;
+  }
+
+  if (!event) {
+    return <p className="text-center mt-10 text-red-500">{message}</p>;
+  }
 
   return (
     <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow">
@@ -69,15 +112,18 @@ export default function EventDetails() {
         </span>
       )}
 
-      <p className="mt-4">{event.description}</p>
+      <p className="mt-4 text-gray-800">{event.description}</p>
 
       <p className="mt-4 text-sm text-gray-700">
         👥 {rsvpCount} people registered
       </p>
 
+      {/* RSVP SECTION */}
       <div className="mt-6">
         {!user && (
-          <p className="text-sm text-gray-500">Please log in to register.</p>
+          <p className="text-sm text-gray-500">
+            Please log in to register for this event.
+          </p>
         )}
 
         {user && isPastEvent && (
@@ -100,7 +146,57 @@ export default function EventDetails() {
         )}
       </div>
 
-      {message && <p className="mt-4 text-sm">{message}</p>}
+      {message && (
+        <p className="mt-4 text-sm font-medium text-blue-600">{message}</p>
+      )}
+
+      {/* REVIEWS SECTION */}
+      <div className="mt-10">
+        <h2 className="text-xl font-semibold mb-3">Reviews</h2>
+
+        {user && registered && !isPastEvent && (
+          <div className="mb-6">
+            <select
+              value={rating}
+              onChange={(e) => setRating(e.target.value)}
+              className="border p-1 rounded"
+            >
+              {[1, 2, 3, 4, 5].map((n) => (
+                <option key={n} value={n}>
+                  {n} ⭐
+                </option>
+              ))}
+            </select>
+
+            <textarea
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+              placeholder="Write your review..."
+              className="w-full border p-2 rounded mt-2"
+            />
+
+            <button
+              onClick={submitReview}
+              className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Submit Review
+            </button>
+          </div>
+        )}
+
+        {reviews.length === 0 ? (
+          <p className="text-gray-600">No reviews yet.</p>
+        ) : (
+          reviews.map((r) => (
+            <div key={r.review_id} className="border-b py-3">
+              <p className="font-medium">
+                {r.name} • {r.rating} ⭐
+              </p>
+              <p className="text-sm text-gray-700">{r.review_text}</p>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
