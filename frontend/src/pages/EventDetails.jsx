@@ -151,52 +151,65 @@ export default function EventDetails() {
       )}
 
       {/* REVIEWS SECTION */}
-      <div className="mt-10">
-        <h2 className="text-xl font-semibold mb-3">Reviews</h2>
+{/* REVIEWS SECTION */}
+<div className="mt-10">
+  <h2 className="text-xl font-semibold mb-3">Reviews</h2>
 
-        {user && registered && !isPastEvent && (
-          <div className="mb-6">
-            <select
-              value={rating}
-              onChange={(e) => setRating(e.target.value)}
-              className="border p-1 rounded"
-            >
-              {[1, 2, 3, 4, 5].map((n) => (
-                <option key={n} value={n}>
-                  {n} ⭐
-                </option>
-              ))}
-            </select>
+  {user && registered && isPastEvent && (
+    <div className="mb-6">
+      <select
+        value={rating}
+        onChange={(e) => setRating(e.target.value)}
+        className="border p-1 rounded"
+      >
+        {[1, 2, 3, 4, 5].map((n) => (
+          <option key={n} value={n}>
+            {n} ⭐
+          </option>
+        ))}
+      </select>
 
-            <textarea
-              value={reviewText}
-              onChange={(e) => setReviewText(e.target.value)}
-              placeholder="Write your review..."
-              className="w-full border p-2 rounded mt-2"
-            />
+      <textarea
+        value={reviewText}
+        onChange={(e) => setReviewText(e.target.value)}
+        placeholder="Write your review..."
+        className="w-full border p-2 rounded mt-2"
+      />
 
-            <button
-              onClick={submitReview}
-              className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
-              Submit Review
-            </button>
-          </div>
-        )}
-
-        {reviews.length === 0 ? (
-          <p className="text-gray-600">No reviews yet.</p>
-        ) : (
-          reviews.map((r) => (
-            <div key={r.review_id} className="border-b py-3">
-              <p className="font-medium">
-                {r.name} • {r.rating} ⭐
-              </p>
-              <p className="text-sm text-gray-700">{r.review_text}</p>
-            </div>
-          ))
-        )}
-      </div>
+      <button
+        onClick={submitReview}
+        className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Submit Review
+      </button>
     </div>
+  )}
+
+  {reviews.map((r) => (
+    <div key={r.review_id} className="border-b py-3">
+      <p className="font-medium">
+        {r.name} • {r.rating} ⭐
+        {r.sentiment && (
+          <span
+            className={`ml-2 text-xs px-2 py-1 rounded ${
+              r.sentiment === "positive"
+                ? "bg-green-200 text-green-800"
+                : r.sentiment === "negative"
+                ? "bg-red-200 text-red-800"
+                : "bg-gray-200 text-gray-700"
+            }`}
+          >
+            {r.sentiment}
+          </span>
+        )}
+      </p>
+      <p className="text-sm text-gray-700">{r.review_text}</p>
+    </div>
+  ))}
+</div>
+
+
+      </div>
+ 
   );
 }

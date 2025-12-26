@@ -1,9 +1,11 @@
 import db from "../config/db.js";
+import axios from "axios";
 
 /**
  * ADD REVIEW
  * - User must have RSVP'd
- * - Event must have ended (time-based, not status-based)
+ * - Event must have ended
+ * - Sentiment is generated and stored
  */
 export const addReview = (req, res) => {
   const userId = req.user.id;
@@ -13,7 +15,7 @@ export const addReview = (req, res) => {
     return res.status(400).json({ msg: "All fields are required" });
   }
 
-  // 1️⃣ Ensure event has ended (MySQL time comparison)
+  // 1️⃣ Check if event has ended
   const eventCheckQuery = `
     SELECT event_id
     FROM events
@@ -31,9 +33,10 @@ export const addReview = (req, res) => {
       });
     }
 
-    // 2️⃣ Ensure user RSVP'd
+    // 2️⃣ Check if user RSVP'd
     const rsvpCheck = `
-      SELECT 1 FROM registrations
+      SELECT 1
+      FROM registrations
       WHERE user_id = ? AND event_id = ?
       LIMIT 1
     `;
@@ -56,7 +59,7 @@ export const addReview = (req, res) => {
       db.query(
         insertReview,
         [event_id, userId, rating, review_text],
-        (err) => {
+        async (err, result) => {
           if (err) {
             if (err.code === "ER_DUP_ENTRY") {
               return res.status(400).json({
@@ -66,7 +69,42 @@ export const addReview = (req, res) => {
             return res.status(500).json({ msg: err });
           }
 
-          res.json({ msg: "Review submitted successfully" });
+          // 4️⃣ Call sentiment analysis service
+          try {
+            const sentimentRes = await axios.post(
+              "http://localhost:6001/analyze",
+              { text: review_text }
+            );
+
+            const { sentiment, score } = sentimentRes.data;
+
+            // 5️⃣ Update review with sentiment
+            db.query(
+              `
+              UPDATE event_reviews
+              SET sentiment = ?, sentiment_score = ?
+              WHERE review_id = ?
+            `,
+              [sentiment, score, result.insertId],
+              (updateErr) => {
+                if (updateErr) {
+                  console.error("Failed to update sentiment:", updateErr);
+                }
+
+                return res.json({
+                  msg: "Review submitted successfully",
+                  sentiment,
+                  score,
+                });
+              }
+            );
+          } catch (error) {
+            console.error("Sentiment service error:", error.message);
+
+            return res.json({
+              msg: "Review submitted, but sentiment analysis failed",
+            });
+          }
         }
       );
     });
@@ -80,7 +118,13 @@ export const getEventReviews = (req, res) => {
   const { eventId } = req.params;
 
   const query = `
-    SELECT r.review_id, r.rating, r.review_text, r.created_at, u.name
+    SELECT 
+      r.review_id,
+      r.rating,
+      r.review_text,
+      r.sentiment,
+      r.created_at,
+      u.name
     FROM event_reviews r
     JOIN users u ON r.user_id = u.user_id
     WHERE r.event_id = ?
