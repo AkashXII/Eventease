@@ -52,7 +52,7 @@ Optional but recommended:
 - Automatic expired event filtering
 
 ### UI Features
-- Animated **WebGL background**
+- Animated **WebGL background** (react bits)
 - **3D hover event cards**
 - Glass-style UI components
 - Debounced search bar
