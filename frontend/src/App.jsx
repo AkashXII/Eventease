@@ -14,14 +14,24 @@ import ProtectedRoute from "./pages/ProtectedRoute.jsx";
 import EventDetails from "./pages/EventDetails.jsx";
 import MyRegistrations from "./pages/MyRegistrations.jsx";
 
+import AnimatedBackground from "./components/AnimatedBackground.jsx";
+
 function Layout() {
   return (
-    <>
+    <div className="min-h-screen relative">
+
+      {/* Global animated background */}
+      <AnimatedBackground />
+
+      {/* Navbar */}
       <Navbar />
-      <div className="container mx-auto p-4">
+
+      {/* Page content */}
+      <div className="relative z-10 container mx-auto p-4">
         <Outlet />
       </div>
-    </>
+
+    </div>
   );
 }
 
