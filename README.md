@@ -1,6 +1,6 @@
 # EventEase
 
-EventEase is a full-stack event management platform that allows users to discover events, RSVP, and leave reviews after attending. The application also performs **sentiment analysis on reviews** and features a **modern interactive UI** with an animated WebGL background.
+EventEase is a full-stack event management platform that enables users to discover upcoming events, RSVP, and submit reviews after attending. Administrators can create and manage events through role-based access control, while the system enforces review submission only after events conclude and automatically removes expired events. The platform also incorporates sentiment analysis to evaluate attendee feedback.
 
 ---
 
