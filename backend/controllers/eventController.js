@@ -35,15 +35,27 @@ export const createEvent = async (req, res) => {
 };
 
 export const getEvents = (req, res) => {
-  db.query(
-  "SELECT * FROM events WHERE status != 'expired' ORDER BY date ASC",
-  (err, result) => {
-    if (err) return res.status(500).json({ msg: err });
-    res.json(result);
-  }
-);
-};
+  const search = req.query.search || "";
 
+  const query = `
+    SELECT *
+    FROM events
+    WHERE date >= NOW()
+    AND (title LIKE ? OR location LIKE ?)
+    ORDER BY date ASC
+  `;
+
+  const searchValue = `%${search}%`;
+
+  db.query(query, [searchValue, searchValue], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ msg: "Database error" });
+    }
+
+    res.json(result);
+  });
+};
 export const getEvent = (req, res) => {
   db.query(
     "SELECT * FROM events WHERE event_id = ?",

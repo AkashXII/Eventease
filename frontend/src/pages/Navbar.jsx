@@ -11,49 +11,48 @@ export default function Navbar() {
     navigate("/");
   };
 
+  const btnStyle =
+    "shadow-[inset_0_0_0_2px_#616467] px-4 py-1.5 rounded-full text-xs tracking-widest uppercase font-semibold bg-transparent hover:bg-[#616467] hover:text-white text-white transition duration-200";
+
   return (
-    <nav className="bg-gray-900 text-white p-3 flex justify-between items-center">
+    <nav className="text-white p-3 flex justify-between items-center">
       <Link to="/" className="font-semibold text-xl">
         EventEase
       </Link>
 
-      <div className="space-x-4 flex items-center">
+      <div className="space-x-3 flex items-center">
         {user ? (
           <>
-            <Link
-              to="/my-events"
-              className="bg-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-600"
-            >
-              My Events
-            </Link>
-
+            {/* Hello User FIRST */}
             <span className="text-sm text-gray-300">
               Hello, {user.role === "admin" ? "Admin" : "User"}
             </span>
 
+            {/* My Events */}
+            <Link to="/my-events">
+              <button className={btnStyle}>My Events</button>
+            </Link>
+
+            {/* Admin Create Event */}
             {user.role === "admin" && (
-              <Link
-                to="/create"
-                className="bg-blue-600 px-3 py-1 rounded text-sm hover:bg-blue-700"
-              >
-                + Create Event
+              <Link to="/create">
+                <button className={btnStyle}>Create Event</button>
               </Link>
             )}
 
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 px-3 py-1 rounded text-sm hover:bg-red-700"
-            >
+            {/* Logout */}
+            <button onClick={handleLogout} className={btnStyle}>
               Logout
             </button>
           </>
         ) : (
           <>
-            <Link to="/login" className="hover:text-gray-300">
-              Login
+            <Link to="/login">
+              <button className={btnStyle}>Login</button>
             </Link>
-            <Link to="/register" className="hover:text-gray-300">
-              Register
+
+            <Link to="/register">
+              <button className={btnStyle}>Register</button>
             </Link>
           </>
         )}

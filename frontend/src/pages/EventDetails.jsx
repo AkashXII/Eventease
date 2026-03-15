@@ -89,9 +89,10 @@ export default function EventDetails() {
   if (!event) {
     return <p className="text-center mt-10 text-red-500">{message}</p>;
   }
-
+const btnStyle =
+    "shadow-[inset_0_0_0_2px_#616467] px-4 py-1.5 rounded-full text-xs tracking-widest uppercase font-semibold bg-transparent hover:bg-[#616467] hover:text-white text-white transition duration-200";
   return (
-    <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+    <div className="max-w-3xl mx-auto backdrop-blur-sm border border-red-500/50  p-6 rounded shadow">
       {event.image_url && (
         <img
           src={event.image_url}
@@ -132,7 +133,7 @@ export default function EventDetails() {
 
         {user && !isPastEvent && registered && (
           <p className="text-green-600 font-medium">
-            ✅ You are registered for this event
+             You are registered for this event
           </p>
         )}
 
@@ -178,7 +179,7 @@ export default function EventDetails() {
 
       <button
         onClick={submitReview}
-        className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className={btnStyle}
       >
         Submit Review
       </button>

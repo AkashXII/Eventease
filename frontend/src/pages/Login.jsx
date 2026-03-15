@@ -41,12 +41,9 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           className="w-full border p-2 rounded"
         />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-        >
-          Login
-        </button>
+<button className="shadow-[0_0_0_3px_#000000_inset] px-6 py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400">
+  Login
+</button>
       </form>
     </div>
   );

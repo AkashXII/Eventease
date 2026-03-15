@@ -20,7 +20,8 @@ export default function Register() {
       setError(err.response?.data?.msg || "Registration failed");
     }
   };
-
+const btnStyle =
+    "shadow-[inset_0_0_0_2px_#616467] px-4 py-1.5 rounded-full text-xs tracking-widest uppercase font-semibold bg-transparent hover:bg-[#616467] hover:text-white text-white transition duration-200";
   return (
     <div className="max-w-sm mx-auto bg-white p-6 rounded shadow mt-10">
       <h2 className="text-xl font-semibold mb-4 text-center">Register</h2>
@@ -50,8 +51,7 @@ export default function Register() {
         />
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-        >
+          className="shadow-[0_0_0_3px_#000000_inset] px-6 py-2 bg-transparent border border-black dark:border-white dark:text-white text-black rounded-lg font-bold transform hover:-translate-y-1 transition duration-400">
           Register
         </button>
       </form>
