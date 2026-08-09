@@ -7,8 +7,6 @@ export const createEvent = async (req, res) => {
 
     if (!title || !description || !location || !date)
       return res.status(400).json({ msg: "All fields required" });
-
-    // Upload image if present
     let image_url = null;
     if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path, {

@@ -25,7 +25,7 @@ app.use("/api/registrations", registrationRoutes);
 app.use("/api/reviews", reviewRoutes);
 
 
-// Health check
+//health chek
 app.get("/", (req, res) => {
   res.send("EventEase Backend Running");
 });

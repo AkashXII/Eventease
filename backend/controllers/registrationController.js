@@ -1,8 +1,5 @@
 import db from "../config/db.js";
 
-/**
- * Register current user for an event (RSVP)
- */
 export const registerForEvent = (req, res) => {
   const { event_id } = req.body;
   const user_id = req.user.id;
@@ -11,7 +8,7 @@ export const registerForEvent = (req, res) => {
     return res.status(400).json({ msg: "Event ID is required" });
   }
 
-  // Prevent duplicate registration
+
   const checkQuery = `
     SELECT 1 FROM registrations
     WHERE user_id = ? AND event_id = ?
@@ -37,9 +34,6 @@ export const registerForEvent = (req, res) => {
   });
 };
 
-/**
- * Check if current user is registered for an event (UX helper)
- */
 export const getRegistrationStatus = (req, res) => {
   const user_id = req.user.id;
   const { eventId } = req.params;
@@ -56,9 +50,6 @@ export const getRegistrationStatus = (req, res) => {
   });
 };
 
-/**
- * Get total RSVP count for an event (UX helper)
- */
 export const getRSVPCount = (req, res) => {
   const { eventId } = req.params;
 
@@ -74,9 +65,7 @@ export const getRSVPCount = (req, res) => {
   });
 };
 
-/**
- * Get all attendees of an event (admin / organizer view)
- */
+
 export const getEventAttendees = (req, res) => {
   const { eventId } = req.params;
 
@@ -98,9 +87,7 @@ export const getEventAttendees = (req, res) => {
   });
 };
 
-/**
- * Get events the current user has registered for
- */
+
 export const getMyRegistrations = (req, res) => {
   const user_id = req.user.id;
 

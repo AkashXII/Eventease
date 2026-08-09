@@ -1,12 +1,7 @@
 import db from "../config/db.js";
 import axios from "axios";
 
-/**
- * ADD REVIEW
- * - User must have RSVP'd
- * - Event must have ended
- * - Sentiment is generated and stored
- */
+
 export const addReview = (req, res) => {
   const userId = req.user.id;
   const { event_id, rating, review_text } = req.body;
@@ -15,7 +10,6 @@ export const addReview = (req, res) => {
     return res.status(400).json({ msg: "All fields are required" });
   }
 
-  // 1️⃣ Check if event has ended
   const eventCheckQuery = `
     SELECT event_id
     FROM events
@@ -77,8 +71,6 @@ export const addReview = (req, res) => {
             );
 
             const { sentiment, score } = sentimentRes.data;
-
-            // 5️⃣ Update review with sentiment
             db.query(
               `
               UPDATE event_reviews
@@ -111,9 +103,7 @@ export const addReview = (req, res) => {
   });
 };
 
-/**
- * GET REVIEWS FOR AN EVENT
- */
+
 export const getEventReviews = (req, res) => {
   const { eventId } = req.params;
 

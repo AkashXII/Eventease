@@ -14,7 +14,7 @@ router.post("/", verifyToken, registerForEvent);
 router.get("/me", verifyToken, getMyRegistrations);
 router.get("/event/:eventId", verifyToken, getEventAttendees);
 
-// NEW
+
 router.get("/status/:eventId", verifyToken, getRegistrationStatus);
 router.get("/count/:eventId", getRSVPCount);
 
